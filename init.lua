@@ -5,9 +5,9 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
-vim.opt.tabstop = 4
+vim.opt.tabstop = 3
 vim.opt.expandtab = true
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -17,15 +17,52 @@ vim.opt.shiftwidth = 4
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Move cursor in insert mode
+vim.keymap.set("i", "<C-j>", "<Down>")
+vim.keymap.set("i", "<C-k>", "<Up>")
+vim.keymap.set("i", "<C-l>", "<Right>")
+vim.keymap.set("i", "<C-h>", "<Left>")
 
+-- Move lines up/down
 vim.keymap.set("n", "<C-j>", ":m .+1<CR>==")     -- move line up(n)
 vim.keymap.set("n", "<C-k>", ":m .-2<CR>==")     -- move line down(n)
 vim.keymap.set("v", "<C-j>", ":m '>+1<CR>gv=gv") -- move line up(v)
 vim.keymap.set("v", "<C-k>", ":m '<-2<CR>gv=gv") -- move line down(v)
-vim.keymap.set("n", "<leader>1", "1gt")          -- move line down(v)
-vim.keymap.set("n", "<leader>2", "2gt")          -- move line down(v)
-vim.keymap.set("n", "<leader>3", "3gt")          -- move line down(v)
-vim.keymap.set("n", "<leader>4", "4gt")          -- move line down(v)
+
+-- Switch tabs
+vim.keymap.set("n", "<leader>1", "1gt") -- move line down(v)
+vim.keymap.set("n", "<leader>2", "2gt") -- move line down(v)
+vim.keymap.set("n", "<leader>3", "3gt") -- move line down(v)
+vim.keymap.set("n", "<leader>4", "4gt") -- move line down(v)
+
+-- Quick quit
+vim.keymap.set("n", "qq", ":q!<CR>")
+
+
+-- Split screen
+vim.keymap.set("n", "sv", ":vsplit<CR>")
+vim.keymap.set("n", "ss", ":split<CR>")
+
+-- Move windows
+vim.keymap.set("n", "<C-w>j", "<C-W>J")
+vim.keymap.set("n", "<C-w>h", "<C-W>H")
+vim.keymap.set("n", "<C-w>k", "<C-W>K")
+vim.keymap.set("n", "<C-w>l", "<C-W>L")
+
+
+-- Window resize
+vim.keymap.set("n", "-", "<Cmd>vertical resize +5<CR>")
+vim.keymap.set("n", "=", "<Cmd>vertical resize -5<CR>")
+vim.keymap.set("n", "+", "<Cmd>horizontal resize +5<CR>")
+vim.keymap.set("n", "_", "<Cmd>horizontal resize -5<CR>")
+
+-- Select all
+vim.keymap.set("n", "<C-a>", "ggVG")
+-- New tab
+-- vim.keymap.set("n", "te", ":tabnew<CR>")
+-- vim.keymap.set("n", "<tab>", ":tabnext<CR>")
+-- vim.keymap.set("n", "<tab>", ":tabprev<CR>")
+
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -102,7 +139,20 @@ vim.o.confirm = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
+<<<<<<< HEAD
+=======
+vim.keymap.set('n', '[d', vim.diagnostic.goto_next,
+  { desc = 'Go to previous [D]iagnostic message' })
+
+-- Diagnostic keymaps
+vim.keymap.set('n', ']d', vim.diagnostic.goto_prev,
+  { desc = 'Go to previous [D]iagnostic message' })
+
+-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+>>>>>>> a5b8e96 (Save newest changes.)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -126,6 +176,7 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+<<<<<<< HEAD
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -133,6 +184,8 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+=======
+>>>>>>> a5b8e96 (Save newest changes.)
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -143,10 +196,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
+<<<<<<< HEAD
     vim.hl.on_yank()
+=======
+>>>>>>> a5b8e96 (Save newest changes.)
   end,
-})
+  vim.highlight.on_yank()
 
+})
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -280,6 +337,7 @@ require('lazy').setup({
   },
 
   -- NOTE: Plugins can specify dependencies.
+<<<<<<< HEAD
   --
 
   { -- Fuzzy Finder (files, lsp, etc)
@@ -369,6 +427,8 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
+=======
+>>>>>>> a5b8e96 (Save newest changes.)
 
   -- LSP Plugins
   {
@@ -441,6 +501,10 @@ require('lazy').setup({
           --  To jump back, press <C-t>.
           map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
+          --  This is where a variable was first declared, or where a function is defined, etc.
+          --  To jump back, press <C-t>.
+          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -473,6 +537,35 @@ require('lazy').setup({
               return client.supports_method(method, { bufnr = bufnr })
             end
           end
+
+          -- Fuzzy find all the symbols in your current document.
+          --  Symbols are things like variables, functions, types, etc.
+          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+
+          -- Fuzzy find all the symbols in your current workspace.
+          --  Similar to document symbols, except searches over your entire project.
+          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+
+          -- Rename the variable under your cursor.
+          --  Most Language Servers support renaming across files, etc.
+          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+
+
+          map('<leader>h', vim.lsp.buf.signature_help, '[H]elp')
+
+          -- Execute a code action, usually your cursor needs to be on top of an error
+          -- or a suggestion from your LSP for this to activate.
+          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+
+          --  See `:help K` for why this keymap.
+          -- Opens a popup that displays documentation about the word under your cursor
+          map('K', vim.lsp.buf.hover, 'Hover Documentation')
+
+          -- WARN: This is not Goto Definition, this is Goto Declaration.
+          --  For example, in C this would take you to the header.
+          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+
+          map('<leader>vrr', vim.lsp.buf.references, '[V]isual [R]eferences')
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
@@ -561,7 +654,21 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {
+          filetypes = { 'go', 'gomod', 'go.mod', 'gotmpl', 'gowork' },
+          settings = {
+            gopls = {
+              completeUnimported = true,
+              usePlaceholders = true,
+              analyses = {
+                unusedparams = true,
+                shadow = true,
+                unusedwrite = true,
+              },
+              staticcheck = true,
+            },
+          },
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -572,7 +679,49 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
-
+        pylsp = {
+          settings = {
+            pylsp = {
+              plugins = {
+                pycodestyle = {
+                  maxLineLength = 120,
+                },
+                pyright = {
+                  useLibraryCodeForTypes = true,
+                },
+                mypy = {
+                  enabled = true,
+                  live_mode = true,
+                  executable = "/Users/ban/.pyenv/shims/mypy",
+                  config = {
+                    follow_imports = "normal",
+                    strict_optional = true,
+                    disallow_untyped_calls = false,
+                    disallow_untyped_defs = false,
+                    disallow_incomplete_defs = false,
+                    check_untyped_defs = false,
+                    disallow_untyped_decorators = true,
+                    no_implicit_optional = true,
+                    show_error_codes = true,
+                    show_column_numbers = true,
+                    show_error_context = true,
+                    strict_equality = true,
+                    ignore_errors = false,
+                    ignore_missing_imports = false,
+                    no_implicit_reexport = false,
+                    warn_unused_variables = true,
+                    warn_unused_ignores = true,
+                    warn_return_any = true,
+                    warn_unreachable = true,
+                    warn_unused_configs = true,
+                    warn_incomplete_stub = true,
+                    warn_redundant_casts = true,
+                  },
+                },
+              },
+            },
+          },
+        },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -688,12 +837,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
         opts = {},
       },
@@ -837,7 +986,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'graphql', 'gitcommit', 'git_rebase', 'git_config', 'gosum', 'jq', 'markdown_inline' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -864,9 +1013,9 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 

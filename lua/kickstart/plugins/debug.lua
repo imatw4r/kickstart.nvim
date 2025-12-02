@@ -9,6 +9,7 @@
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
+  "mfussenegger/nvim-dap-python",
   -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
@@ -23,6 +24,7 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
