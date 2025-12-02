@@ -29,9 +29,9 @@ return {
         timeout_ms = 500,
       }
     end, { desc = 'Format file or range (in visual mode)' })
-    -- conform.formatters.black = {
-    --   prepend_args = { '-l', '88' },
-    -- }
+    conform.formatters.prettier = {
+      prepend_args = { '-l', '88' },
+    }
     conform.formatters.autoflake = {
       lsp_format = "never",
       command = "autoflake",

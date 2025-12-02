@@ -61,6 +61,17 @@ vim.keymap.set("n", "_", "<Cmd>horizontal resize -5<CR>")
 -- Select all
 vim.keymap.set("n", "<C-a>", "ggVG")
 
+-- Copy filename
+vim.keymap.set("n", "<leader>yf", function ()
+  vim.fn.setreg('+', vim.fn.expand('%'))
+end)
+
+-- Copy filename + functioname + lineno
+vim.keymap.set("n", "<leader>yfn", function()
+
+
+end)
+
 -- Delete current file
 local function confirm_and_delete_buffer()
   local confirm = vim.fn.confirm("Delete buffer and file?", "&Yes\n&No", 2)
@@ -70,6 +81,17 @@ local function confirm_and_delete_buffer()
     vim.api.nvim_buf_delete(0, { force = true })
   end
 end
+
+local function set_persistent_undo()
+  local target_path = vim.fn.expand('~/.config/vim-persisted-undo/')
+  if vim.fn.isdirectory(target_path) == 0 then
+    vim.fn.mkdir(target_path, 'p')
+  end
+  vim.opt.undodir = target_path
+  vim.opt.undofile = true
+end
+
+set_persistent_undo()
 
 vim.keymap.set("n", "<leader>df", confirm_and_delete_buffer,
   { noremap = true, silent = true, desc = "Delete buffer and file" })
@@ -456,6 +478,16 @@ require('lazy').setup({
       'saghen/blink.cmp',
     },
     config = function()
+      -- Setup neodev before configuring LSP
+      require("neodev").setup({
+        library = {
+          enabled = true,
+          runtime = true,
+          types = true,
+          plugins = true,
+        },
+      })
+      
       -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
       -- and elegantly composed help section, `:help lsp-vs-treesitter`
 
@@ -650,9 +682,9 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         gopls = {
-          filetypes = { 'go', 'gomod', 'gowork', 'go.work', 'gotmpl' },
+          filetypes = { 'go', 'go.mod', 'gowork', 'go.work', 'gotmpl' },
           cmd = { "gopls", "serve" },
-          root_dir = require('lspconfig.util').root_pattern('go.mod', '.git'),
+          root_dir = require('lspconfig.util').root_pattern('go.mod', 'go.work'),
           settings = {
             gopls = {
               buildFlags = { "-tags=integration", "-tags=wireinject" },
@@ -724,10 +756,26 @@ require('lazy').setup({
           -- cmd = { ... },
           -- filetypes = { ... },
           -- capabilities = {},
+          Lua = {
+            -- vim added to suppress diagnostic errors saying 'vim undefined global variable'
+            diagnostics = { "vim",  "describe", "it", "before_each", "after_each",  }
+          },
           settings = {
             Lua = {
               completion = {
                 callSnippet = 'Replace',
+              },
+              diagnostics = {
+                globals = { 'vim' },
+              },
+              runtime = {
+                version = 'LuaJIT',
+              },
+              workspace = {
+                checkThirdParty = false,
+                library = {
+                  vim.env.VIMRUNTIME,
+                },
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
@@ -935,8 +983,18 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
-    end,
   },
+
+  -- { -- Catppuccin colorscheme
+  --   "catppuccin/nvim",
+  --   name = "catppuccin",
+  --   priority = 1000,
+  --   init = function()
+  --     vim.cmd.colorscheme("catppuccin")
+  --     -- You can configure highlights by doing something like:
+  --     vim.cmd.hi 'Comment gui=none'
+  --   end,
+  -- },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -1050,7 +1108,6 @@ require('lazy').setup({
   },
 })
 
-vim.cmd.colorscheme "catppuccin"
 vim.g.tmux_navigator_save_on_switch = 2
 
 -- The line beneath this is called `modeline`. See `:help modeline`
