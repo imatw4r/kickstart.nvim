@@ -47,6 +47,19 @@ return { -- Fuzzy Finder (files, lsp, etc)
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
+        ['live_grep_args'] = {
+          -- The default args to use for live grep
+          args = {
+            '--no-ignore',
+            '--color=never',
+            '--glob',
+            '!.git',
+            '--glob',
+            '!node_modules',
+            '--glob',
+            '!vendor',
+          },
+        },
       },
     }
 
@@ -68,7 +81,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
     end, { desc = '[S]earch [F]iles' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-    vim.keymap.set("n", "<leader>sg", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
+    vim.keymap.set("n", "<leader>sg", require('telescope').extensions.live_grep_args.live_grep_args,
       { desc = '[F]ind [G]rep [A]rgs' })
     -- vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
@@ -94,7 +107,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
       }
     end, { desc = '[S]earch [/] in Open Files' })
 
-    -- Shortcut for searching your Neovim configuration files
+   -- Shortcut for searching your Neovim configuration files
     vim.keymap.set('n', '<leader>sn', function()
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })

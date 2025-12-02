@@ -3,7 +3,6 @@
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
@@ -28,6 +27,9 @@ vim.keymap.set("n", "<C-j>", ":m .+1<CR>==")     -- move line up(n)
 vim.keymap.set("n", "<C-k>", ":m .-2<CR>==")     -- move line down(n)
 vim.keymap.set("v", "<C-j>", ":m '>+1<CR>gv=gv") -- move line up(v)
 vim.keymap.set("v", "<C-k>", ":m '<-2<CR>gv=gv") -- move line down(v)
+
+-- Map CAPS to ESC
+vim.keymap.set('i', '<F19>', '<Esc>', { noremap = true })
 
 -- Switch tabs
 vim.keymap.set("n", "<leader>1", "1gt") -- move line down(v)
@@ -58,6 +60,20 @@ vim.keymap.set("n", "_", "<Cmd>horizontal resize -5<CR>")
 
 -- Select all
 vim.keymap.set("n", "<C-a>", "ggVG")
+
+-- Delete current file
+local function confirm_and_delete_buffer()
+  local confirm = vim.fn.confirm("Delete buffer and file?", "&Yes\n&No", 2)
+
+  if confirm == 1 then
+    os.remove(vim.fn.expand "%")
+    vim.api.nvim_buf_delete(0, { force = true })
+  end
+end
+
+vim.keymap.set("n", "<leader>df", confirm_and_delete_buffer,
+  { noremap = true, silent = true, desc = "Delete buffer and file" })
+
 -- New tab
 -- vim.keymap.set("n", "te", ":tabnew<CR>")
 -- vim.keymap.set("n", "<tab>", ":tabnext<CR>")
@@ -67,7 +83,7 @@ vim.keymap.set("n", "<C-a>", "ggVG")
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.opt.relativenumber = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -139,8 +155,6 @@ vim.o.confirm = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-<<<<<<< HEAD
-=======
 vim.keymap.set('n', '[d', vim.diagnostic.goto_next,
   { desc = 'Go to previous [D]iagnostic message' })
 
@@ -150,7 +164,6 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_prev,
 
 -- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
->>>>>>> a5b8e96 (Save newest changes.)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 
@@ -176,16 +189,7 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-<<<<<<< HEAD
 
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
-
-=======
->>>>>>> a5b8e96 (Save newest changes.)
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -196,13 +200,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
-<<<<<<< HEAD
     vim.hl.on_yank()
-=======
->>>>>>> a5b8e96 (Save newest changes.)
   end,
-  vim.highlight.on_yank()
-
 })
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -337,7 +336,6 @@ require('lazy').setup({
   },
 
   -- NOTE: Plugins can specify dependencies.
-<<<<<<< HEAD
   --
 
   { -- Fuzzy Finder (files, lsp, etc)
@@ -427,9 +425,6 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
-=======
->>>>>>> a5b8e96 (Save newest changes.)
-
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -655,9 +650,12 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         gopls = {
-          filetypes = { 'go', 'gomod', 'go.mod', 'gotmpl', 'gowork' },
+          filetypes = { 'go', 'gomod', 'gowork', 'go.work', 'gotmpl' },
+          cmd = { "gopls", "serve" },
+          root_dir = require('lspconfig.util').root_pattern('go.mod', '.git'),
           settings = {
             gopls = {
+              buildFlags = { "-tags=integration", "-tags=wireinject" },
               completeUnimported = true,
               usePlaceholders = true,
               analyses = {
@@ -669,7 +667,9 @@ require('lazy').setup({
             },
           },
         },
-        -- pyright = {},
+        pyright = {
+          
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -679,49 +679,47 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
-        pylsp = {
-          settings = {
-            pylsp = {
-              plugins = {
-                pycodestyle = {
-                  maxLineLength = 120,
-                },
-                pyright = {
-                  useLibraryCodeForTypes = true,
-                },
-                mypy = {
-                  enabled = true,
-                  live_mode = true,
-                  executable = "/Users/ban/.pyenv/shims/mypy",
-                  config = {
-                    follow_imports = "normal",
-                    strict_optional = true,
-                    disallow_untyped_calls = false,
-                    disallow_untyped_defs = false,
-                    disallow_incomplete_defs = false,
-                    check_untyped_defs = false,
-                    disallow_untyped_decorators = true,
-                    no_implicit_optional = true,
-                    show_error_codes = true,
-                    show_column_numbers = true,
-                    show_error_context = true,
-                    strict_equality = true,
-                    ignore_errors = false,
-                    ignore_missing_imports = false,
-                    no_implicit_reexport = false,
-                    warn_unused_variables = true,
-                    warn_unused_ignores = true,
-                    warn_return_any = true,
-                    warn_unreachable = true,
-                    warn_unused_configs = true,
-                    warn_incomplete_stub = true,
-                    warn_redundant_casts = true,
-                  },
-                },
-              },
-            },
-          },
-        },
+        -- pylsp = {
+        --   settings = {
+        --     pylsp = {
+        --       plugins = {
+        --         pycodestyle = {
+        --            maxLineLength = 119,
+        --          },
+        --         
+        --         mypy = { 
+        --           enabled = false,
+        --           live_mode = true,
+        --           executable = "/Users/ban/.pyenv/shims/mypy",
+        --           config = {
+        --             follow_imports = "normal",
+        --             strict_optional = true,
+        --             disallow_untyped_calls = false,
+        --             disallow_untyped_defs = false,
+        --             disallow_incomplete_defs = false,
+        --             check_untyped_defs = false,
+        --             disallow_untyped_decorators = true,
+        --             no_implicit_optional = true,
+        --             show_error_codes = true,
+        --             show_column_numbers = true,
+        --             show_error_context = true,
+        --             strict_equality = true,
+        --             ignore_errors = false,
+        --             ignore_missing_imports = false,
+        --             no_implicit_reexport = false,
+        --             warn_unused_variables = true,
+        --             warn_unused_ignores = true,
+        --             warn_return_any = true,
+        --             warn_unreachable = true,
+        --             warn_unused_configs = true,
+        --             warn_incomplete_stub = true,
+        --             warn_redundant_casts = true,
+        --           },
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -789,7 +787,7 @@ require('lazy').setup({
       },
     },
     opts = {
-      notify_on_error = false,
+      -- notify_on_error = false,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
@@ -887,7 +885,7 @@ require('lazy').setup({
       -- Accept ([y]es) the completion.
       --  This will auto-import if your LSP supports it.
       --  This will expand snippets if the LSP sent a snippet.
-      ['<TAB>'] = cmp.mapping.confirm { select = true },
+      -- ['<TAB>'] = cmp.mapping.confirm { select = true },
 
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
@@ -986,7 +984,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'graphql', 'gitcommit', 'git_rebase', 'git_config', 'gosum', 'jq', 'markdown_inline' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'graphql', 'gitcommit', 'git_rebase', 'git_config', 'gosum', 'jq', 'markdown_inline', },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1012,7 +1010,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
@@ -1051,6 +1049,9 @@ require('lazy').setup({
     },
   },
 })
+
+vim.cmd.colorscheme "catppuccin"
+vim.g.tmux_navigator_save_on_switch = 2
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
